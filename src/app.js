@@ -11,41 +11,22 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.post("/signup", async (req, res) => {
-  try {
-    // validation of data
-    validateSignUpData(req);
-
-    const { name, emailId, password } = req.body;
-    // encrypt the password
-    const passwordHash = await bcrypt.hash(password);
-
-    // create a new instance of user model
-    const user = new User({
-      name,
-      emailId,
-      password: passwordHash,
-    });
-
-    await user.save();
-    res.send("user saved successfully");
-  } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
-  }
-});
-
 app.post("login", async (req, res) => {
   const { emailId, password } = req.body;
 
   try {
+    // validate email
     if (!validator.isEmail(emailId)) {
       throw new Error("Enter a valid emailId");
     }
+
+    // find user
     const user = User.find({ emailId: emailId });
     if (user.length === 0) {
       throw new Error("Email or password is incorrect!");
     }
 
+    // verify password
     const passwordHash = user.password;
     const isPasswordValid = user.validatePassword(password);
 
@@ -63,15 +44,6 @@ app.post("login", async (req, res) => {
     res.send(user.name + " login successfully...");
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
-  }
-});
-
-app.get("/profile", userAuth, async (req, res) => {
-  try {
-    const user = req.user;
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("Error: " + err.message);
   }
 });
 
@@ -123,4 +95,4 @@ connectDB()
 // rules
 // 1. use async await whenever you do a db operation
 // 2. always do the transaction in a try catch block
-// 3.
+// 3. when you are building a big project categorise list down apis, group them together and then start writing code your code will be much much cleaner

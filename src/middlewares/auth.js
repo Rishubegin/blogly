@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+
 const userAuth = async (req, res, next) => {
   try {
     // Read the token from the req cookies
@@ -7,6 +8,7 @@ const userAuth = async (req, res, next) => {
     if (!token) {
       throw new Error("Token is not valid!!!");
     }
+
     // validate the token
     const decodedObj = await jwt.verify(token, "BLOG@ly$7525");
 

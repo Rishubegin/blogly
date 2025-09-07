@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const valdator = require("validator");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -54,6 +54,7 @@ userSchema.methods.getJWT = async function () {
   return token;
 };
 
+// No arrow function
 userSchema.methods.validatePassword = async function (password) {
   const user = this;
   const passwordHash = user.password;
@@ -61,4 +62,5 @@ userSchema.methods.validatePassword = async function (password) {
   const isPasswordValid = await bcrypt.compare(password, passwordHash);
   return isPasswordValid;
 };
+
 module.exports = mongoose.model("User", userSchema);
